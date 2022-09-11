@@ -97,6 +97,7 @@ class target {
                 b.life = 0;
                 this.hit = true;
                 score++;
+                sounds.hits[Math.floor(random(0, sounds.hits.length))].play();
                 return;
             }
         }
@@ -160,6 +161,7 @@ var cam = {
 };
 
 var textures = {};
+var sounds = {};
 
 function rectsCollide(x1, y1, w1, h1, x2, y2, w2, h2) {
     return !((x1 > x2 + w2) || (y1 > y2 + h2) || (x1 + w1 < x2) || (y1 + h1 < y2));
@@ -167,14 +169,24 @@ function rectsCollide(x1, y1, w1, h1, x2, y2, w2, h2) {
 
 
 function preload() {
-    textures.pyramids = loadImage("./Resources/backgroundColorDesert.png");
+    textures.pyramids = loadImage("./Resources/Textures/backgroundColorDesert.png");
     textures.enemies = {
-        target: loadImage("./Resources/target.png")
+        target: loadImage("./Resources/Textures/target.png")
     };
     textures.obstacles = {
-        sandstone: loadImage("./Resources/sandStone.png"),
-        wall: loadImage("./Resources/brick_grey.png")
+        sandstone: loadImage("./Resources/Textures/sandStone.png"),
+        wall: loadImage("./Resources/Textures/brick_grey.png")
     };
+
+    sounds.gunshots = [];
+    for (let i = 0; i < 5; i++) {
+        sounds.gunshots.push(new Howl({src: ["./Resources/Sound/shot" + i + ".ogg"]}));
+    }
+
+    sounds.hits = [];
+    for (let i = 0; i < 5; i++) {
+        sounds.hits.push(new Howl({src: ["./Resources/Sound/hit" + i + ".ogg"]}))
+    }
 }
 
 function setup() {
@@ -408,6 +420,7 @@ function mousePressed() {
         let bx = player.cx - dx * (((1 - player.gun.maxRecoil) * GUNSIZE) / dmag);
         let by = player.cy - dy * (((1 - player.gun.maxRecoil) * GUNSIZE) / dmag);
         new bullet(bx, by, -dx * (player.gun.speed / dmag), -dy * (player.gun.speed / dmag), player.gun.power / 2, player.gun.power, 500);
+        sounds.gunshots[Math.floor(random(0, sounds.gunshots.length))].play();
     }
 
     return false;
